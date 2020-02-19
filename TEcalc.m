@@ -2,7 +2,7 @@
 % and bottom-up) of the sampled population data.  
 clear
 clc
-epsvals = 21;
+epsvals = 41;
 metapops = 10;
 global TD_TE; 
 global BU_TE;
@@ -15,7 +15,6 @@ for eps = 1:epsvals
         if exist(filename, 'file')
             D = readmatrix(filename);
             storeTE(eps, mpop, D);
-            return;
         end
     end
     fprintf('Finished eps %d\n',eps);
@@ -27,25 +26,20 @@ function storeTE(eps, mpop, D)
     global TD_TE
     global BU_TE
     for i = 1:3
-        k = 3;
-        TDtransferent = calcTE(D(:,1),D(:,i+1), k);
-        BUtransferent = calcTE(D(:,i+1),D(:,1), k);
-%         maxTD = 0;
-%         maxBU = 0;
-%         for k = 1:5
-%             TDtransferent = calcTE(D(:,1),D(:,i+1), k);
-%             BUtransferent = calcTE(D(:,i+1),D(:,1), k);
-%             if TDtransferent > maxTD
-%                 maxTD = TDtransferent; 
-%             end
-%             if BUtransferent > maxBU
-%                 maxBU = BUtransferent;
-%             end
-%             fprintf('Finished k = %d\n', k);
-%         end
-        TD_TE(eps, (mpop-1)*3+i) = TDtransferent;
-        BU_TE(eps, (mpop-1)*3+i) = BUtransferent;
-        break;
+        maxTD = 0;
+        maxBU = 0;
+        for k = 1:2
+            TDtransferent = calcTE(D(:,1),D(:,i+1), k);
+            BUtransferent = calcTE(D(:,i+1),D(:,1), k);
+            if TDtransferent > maxTD
+                maxTD = TDtransferent; 
+            end
+            if BUtransferent > maxBU
+                maxBU = BUtransferent;
+            end
+        end
+        TD_TE(eps, (mpop-1)*3+i) = maxTD;
+        BU_TE(eps, (mpop-1)*3+i) = maxBU;
     end
 end
 
