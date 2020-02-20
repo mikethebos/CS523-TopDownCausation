@@ -61,7 +61,7 @@ def localLogisticGrowth(currPop, repFitCoeff, carryCap):
     
     return repFitCoeff*(currPop-currPop**2/carryCap)
 
-def generateGrowthModels(repFitCoeffs, carryCaps):
+def generateGrowthModels(repFitCoeffs, carryCaps, repFitFun=None, carryCapFun=None):
     """
     generateGrowthModels gennerates the growthModels variable for use in the 
     globalLogisticGrowth equation. Currently it takes two list of equal length
@@ -87,8 +87,16 @@ def generateGrowthModels(repFitCoeffs, carryCaps):
         X_n+1 = f(X_n)
 
     """
-    assert len(repFitCoeffs)==len(carryCaps)
-    return lambda pops:np.array([localLogisticGrowth(p,r,k) for p,r,k in zip(pops,repFitCoeffs,carryCaps)])
+    if carryCapFun and repFitFun:
+        return lambda pops:np.array([localLogisticGrowth(p,repFitFun(pops,r,k),carryCapFun(pops,r,k)) for p,r,k in zip(pops,repFitCoeffs,carryCaps)])
+    if repFitFun:
+        return lambda pops:np.array([localLogisticGrowth(p,repFitFun(pops,r,k),k) for p,r,k in zip(pops,repFitCoeffs,carryCaps)])
+    if carryCapFun:
+        return lambda pops:np.array([localLogisticGrowth(p,r,carryCapFun(pops,r,k)) for p,r,k in zip(pops,repFitCoeffs,carryCaps)])
+    else:
+        assert len(carryCaps) == len(repFitCoeffs)
+        return lambda pops:np.array([localLogisticGrowth(p,r,k) for p,r,k in zip(pops,repFitCoeffs,carryCaps)])
+        
 
 def instDynamicMeanFeild(currPops,growthModels):
     """
