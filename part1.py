@@ -143,7 +143,7 @@ for ax,hx,hy,mi,ti in zip(np.ravel(axarr),Xentropies,Yentropies,mutualInfo,title
     ax.set_ylim(max(hy,hx)/2,max(hy,hx)/-2)
     ax.axis('off')
 
-plt.show()
+plt.savefig()
     
     
     
